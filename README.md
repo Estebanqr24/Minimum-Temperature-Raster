@@ -58,3 +58,9 @@ Minimum-Temperature-Raster/
 - Keep **relative paths** (penalty for absolute paths).
 - Work in **EPSG:4326** unless you specifically need areas (then reproject).
 - Use `/temp/` for intermediates to follow class conventions.
+- 
+## Team & Responsibilities
+- **Sarita Sánchez** – Data preparation, repository setup, reproducibility.
+- **[Nombre 2]** – Zonal statistics and data aggregation.
+- **[Nombre 3]** – Visualization (plots, maps, rankings).
+- **[Nombre 4]** – Streamlit app and public policy proposals.
