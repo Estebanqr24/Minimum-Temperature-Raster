@@ -98,7 +98,8 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.subheader("Mapa coroplético – Tmin media por distrito")
     if img is not None:
-        st.image(img, caption="Coropleta de Tmin media (GeoPandas)", use_column_width=True)
+        # <-- Ajuste: reemplazo para eliminar el warning deprecado
+        st.image(img, caption="Coropleta de Tmin media (GeoPandas)", use_container_width=True)
         st.info("Este mapa se genera en el script `scripts/zonal_stats.py` y se guarda en `data/processed/tmin_choropleth.png`.")
     else:
         st.warning("No se encontró el mapa PNG. Asegúrate de ejecutar el script y de que exista `data/processed/tmin_choropleth.png`.")
@@ -111,7 +112,11 @@ with tab2:
     if top.shape[0] == 0 or bot.shape[0] == 0:
         st.warning("No se encontraron archivos de ranking. Se pueden generar desde `scripts/zonal_stats.py`.")
     else:
-        metric = st.selectbox("Métrica para ordenar", options=[m for m in ["mean","p10","p90","risk_index"] if m in top.columns], index=0)
+        metric = st.selectbox(
+            "Métrica para ordenar",
+            options=[m for m in ["mean","p10","p90","risk_index"] if m in top.columns],
+            index=0
+        )
 
         c1, c2 = st.columns(2)
         with c1:
@@ -120,7 +125,14 @@ with tab2:
             label_cols = [c for c in ["DEPARTAMENTO","PROVINCIA","DISTRITO"] if c in tplot.columns]
             tplot["label"] = tplot[label_cols].agg(" - ".join, axis=1) if label_cols else tplot.index.astype(str)
             st.bar_chart(tplot.set_index("label")[metric])
-            st.dataframe(tplot, use_container_width=True, height=350)
+
+            # <-- Ajuste: formateo 2 decimales
+            fmt_cols_top = [c for c in ["mean","p10","p90","risk_index"] if c in tplot.columns]
+            st.dataframe(
+                tplot.style.format({col: "{:.2f}" for col in fmt_cols_top}),
+                use_container_width=True,
+                height=350
+            )
             st.download_button("Descargar Top 15 (CSV)", data=bytes_from_df(tplot), file_name="top15.csv", mime="text/csv")
 
         with c2:
@@ -129,7 +141,14 @@ with tab2:
             label_cols = [c for c in ["DEPARTAMENTO","PROVINCIA","DISTRITO"] if c in bplot.columns]
             bplot["label"] = bplot[label_cols].agg(" - ".join, axis=1) if label_cols else bplot.index.astype(str)
             st.bar_chart(bplot.set_index("label")[metric])
-            st.dataframe(bplot, use_container_width=True, height=350)
+
+            # <-- Ajuste: formateo 2 decimales
+            fmt_cols_bot = [c for c in ["mean","p10","p90","risk_index"] if c in bplot.columns]
+            st.dataframe(
+                bplot.style.format({col: "{:.2f}" for col in fmt_cols_bot}),
+                use_container_width=True,
+                height=350
+            )
             st.download_button("Descargar Bottom 15 (CSV)", data=bytes_from_df(bplot), file_name="bottom15.csv", mime="text/csv")
 
 # =========================
@@ -150,7 +169,12 @@ with tab3:
             deps = ["(Todos)"] + sorted(df[dep_col].dropna().unique().tolist())
             sel_dep = colf1.selectbox("Departamento", deps, index=0)
 
-        umbral = colf2.slider("Umbral Tmin media (°C)", min_value=float(np.nanmin(df["mean"])), max_value=float(np.nanmax(df["mean"])), value=float(np.nanmedian(df["mean"])))
+        umbral = colf2.slider(
+            "Umbral Tmin media (°C)",
+            min_value=float(np.nanmin(df["mean"])),
+            max_value=float(np.nanmax(df["mean"])),
+            value=float(np.nanmedian(df["mean"]))
+        )
         criterio = colf3.selectbox("Criterio de umbral", ["≤ (más frío)", "≥ (más cálido)"], index=0)
 
         df_view = df.copy()
@@ -163,7 +187,14 @@ with tab3:
             df_view = df_view[df_view["mean"] >= umbral]
 
         st.write(f"**Registros filtrados:** {df_view.shape[0]}")
-        st.dataframe(df_view, use_container_width=True, height=420)
+
+        # <-- Ajuste: formateo 2 decimales en tabla de resumen
+        fmt_cols_view = [c for c in ["mean","p10","p90","risk_index"] if c in df_view.columns]
+        st.dataframe(
+            df_view.style.format({col: "{:.2f}" for col in fmt_cols_view}),
+            use_container_width=True,
+            height=420
+        )
 
         # KPIs del subset
         k1, k2, k3, k4 = st.columns(4)
