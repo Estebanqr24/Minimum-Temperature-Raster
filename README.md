@@ -25,9 +25,8 @@ Minimum-Temperature-Raster/
 │   │   └── vectors/        # put original shapefiles/GeoJSON here
 │   └── clean/              # cleaned vectors will be saved here
 ├── temp/                   # temporary files (pattern used by class)
-├── outputs/                # tables and static figures
 ├── scripts/
-│   └── prepare_data.py     # YOUR STEP 1 (already implemented)
+│   └── prepare_data.py     # limpieza de vectores + inspección del raster
 └── app/
     └── streamlit_app.py    # stub; to be expanded by the team
 ```
