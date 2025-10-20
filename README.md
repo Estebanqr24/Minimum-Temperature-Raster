@@ -1,94 +1,84 @@
-Peru Minimum Temperature (Tmin) – Raster Analysis
+# Peru Minimum Temperature (Tmin) – Raster Analysis
 
-This repository contains the materials for the team assignment on minimum temperature (Tmin) raster analysis for Peru, including zonal statistics, risk insights (frost/cold surges), and an evidence-based public policy section, plus a public Streamlit app.
+This repository contains the materials for the team assignment on **minimum temperature (Tmin) raster analysis** for Peru, including zonal statistics, risk insights (frost/cold surges), a public policy section, and a public **Streamlit** app.
 
-Purpose
+## Purpose
+- Compute **zonal statistics** from a Tmin **GeoTIFF** (districts preferred).
+- Analyze **climate risks** (Andean frosts & Amazon cold surges).
+- Propose **evidence-based public policies**.
+- Deliver a **Streamlit app** with maps, rankings, filters, and downloads.
 
-Use a Tmin GeoTIFF to compute zonal statistics (district preferred; province/department if needed).
+---
 
-Analyze climate risks (Andean frosts and Amazon cold surges).
+## Data description
+- **Raster (Tmin GeoTIFF)**: Minimum temperature (daily/monthly/annual, per source).
+  - If multiband, assume **Band 1 = 2020**, **Band 2 = 2021**, etc. (adjust if metadata differs).
+  - If values are scaled (e.g., **°C × 10**), rescale to real °C during analysis.
+- **Vectors (administrative boundaries)**: Peru districts preferred (else provinces/departments).
+  - Expected fields: **UBIGEO, DEPARTAMENTO, PROVINCIA, DISTRITO**.
+  - Standardize to **UPPERCASE** and **remove diacritics**.
+- **CRS**: Work in **EPSG:4326 (WGS84)**. Reproject to UTM only when computing areas.
 
-Propose evidence-based public policies.
+---
 
-Deliver a public Streamlit app with maps, rankings, filters, and downloads.
+## Folder structure
 
-Data description
-
-Raster (Tmin GeoTIFF): Minimum temperature (daily/monthly/annual, per source).
-
-If multiband, assume Band 1 = 2020, Band 2 = 2021, etc. (adjust if metadata differs).
-
-If values are scaled (e.g., °C × 10), rescale to real °C in analysis.
-
-Vectors (administrative boundaries): Peru districts preferred (else provinces/departments).
-
-Expected fields: UBIGEO, DEPARTAMENTO, PROVINCIA, DISTRITO.
-
-Standardize to UPPERCASE and remove diacritics.
-
-CRS: Work in EPSG:4326 (WGS84). Reproject to UTM only if computing areas.
-
-Folder structure
 Minimum-Temperature-Raster/
 ├── README.md
 ├── requirements.txt
 ├── .streamlit/
-│   └── config.toml                  # theme (wide layout; clean look)
+│ └── config.toml
 ├── data/
-│   ├── raw/
-│   │   ├── raster/
-│   │   │   └── tmin_peru.tif       # primary GeoTIFF (multiband allowed)
-│   │   └── vectors/
-│   │       └── distritos_peru.zip  # original INEI districts (zipped shapefile)
-│   ├── clean/
-│   │   └── peru_distrital_simple.geojson   # cleaned/standardized (output)
-│   └── processed/
-│       ├── tmin_zonal_distritos.csv
-│       ├── top15_tmin_mean_alta.csv
-│       ├── top15_tmin_mean_baja.csv
-│       └── tmin_choropleth.png
-├── temp/                            # intermediates (ignored in commits)
+│ ├── raw/
+│ │ ├── raster/
+│ │ │ └── tmin_peru.tif
+│ │ └── vectors/
+│ │ └── DISTRITOS_LIMITES.zip
+│ ├── clean/
+│ │ └── peru_distrital_simple.geojson
+│ └── processed/
+│ ├── tmin_zonal_distritos.csv
+│ ├── top15_tmin_mean_alta.csv
+│ ├── top15_tmin_mean_baja.csv
+│ └── tmin_choropleth.png
 ├── scripts/
-│   ├── prepare_data.py              # vector cleaning + raster inspection
-│   └── zonal_stats.py               # zonal stats + plots/exports
+│ ├── prepare_data.py
+│ └── zonal_stats.py
 └── app/
-    └── streamlit_app.py             # Streamlit public app
+└── streamlit_app.py
 
 
-Nota: Si el shapefile pesa mucho, mantenerlo comprimido (.zip) en data/raw/vectors/ está OK para GitHub. Los scripts lo pueden leer directamente (descomprimiendo localmente) o usando el .geojson de data/clean/.
+> Tip: Keep heavy shapefiles zipped in `data/raw/vectors/`. The scripts can read from the cleaned GeoJSON in `data/clean/`.
 
-Reproducibility
-1) Environment
+---
 
-Python 3.10+
+## Reproducibility
 
-Create/activate environment and install deps:
-
+### 1) Environment
+- Python **3.10+**
+- Install deps:
+```bash
 pip install -r requirements.txt
 
 2) Place datasets
 
 GeoTIFF → data/raw/raster/tmin_peru.tif
 
-Vectors (INEI districts shapefile zipped) → data/raw/vectors/distritos_peru.zip
+Vectors (INEI districts zipped) → data/raw/vectors/DISTRITOS_LIMITES.zip
 
 3) Prepare data
 python scripts/prepare_data.py
 
+Creates:
 
-This will:
+data/clean/peru_distrital_simple.geojson (cleaned vectors)
 
-Clean vectors (uppercase, no diacritics), fix simple geometries, set CRS.
-
-Save data/clean/peru_distrital_simple.geojson.
-
-Inspect raster (CRS, bands, dtype, min/max) and warn if values look like °C×10.
+Raster inspection (CRS, bands, dtype, min/max; warns if °C×10)
 
 4) Zonal statistics & plots
 python scripts/zonal_stats.py
 
-
-This will produce in data/processed/:
+Outputs to data/processed/:
 
 tmin_zonal_distritos.csv
 
@@ -101,18 +91,17 @@ tmin_choropleth.png
 5) Run the app
 streamlit run app/streamlit_app.py
 
-
 The app includes:
 
-Choropleth PNG (static) with styled caption + download button.
+Choropleth PNG full-width with styled caption & download.
 
-Interactive Altair bars for Top/Bottom 15 (metric selector).
+Interactive Altair bars (Top/Bottom 15) with metric selector.
 
-Filtered table with gradient + two decimals, CSV download.
+Filtered table with gradient + two decimals and CSV export.
 
 KPIs with thousand separators & emojis.
 
-Public policy section (3 prioritized measures with target & KPIs).
+Public policies tab (3 prioritized measures).
 
 Technical requirements
 
@@ -120,62 +109,49 @@ Python 3.10+
 
 Packages: geopandas, rasterio, rasterstats, rioxarray, shapely, pyproj, matplotlib, pandas, numpy, streamlit, altair
 
-Keep relative paths.
+Use relative paths and EPSG:4326 (unless computing areas).
 
-Work in EPSG:4326 (unless computing areas).
+Use /temp/ for intermediates as per class convention.
 
-Use /temp/ for intermediates (per class convention).
+What’s done so far
 
-What’s done so far (progress log)
+Repository structure consolidated (data/raw, data/clean, data/processed, scripts, app).
 
-Repo organization: standardized data/raw/…, data/clean/, data/processed/, scripts/, app/.
+Vectors managed as ZIP in data/raw/vectors/ and cleaned to GeoJSON.
 
-Vectors: added INEI districts as data/raw/vectors/distritos_peru.zip (zipped to keep the repo light).
+Processed outputs present (zonal stats, top/bottom, choropleth PNG).
 
-Processed outputs present (after running scripts): CSVs (zonal stats + top/bottom) and tmin_choropleth.png.
+Streamlit app polished:
 
-Streamlit app:
+Centered title + compact typography (CSS).
 
-Title centered, compact typography (CSS).
+Altair interactive bars for Top/Bottom 15.
 
-Altair interactive bar charts for Top/Bottom 15.
-
-DataFrames with two-decimal formatting and gradient heatmap on metric columns.
+DataFrames with 2-decimal formatting + gradient heatmap.
 
 KPIs with thousand separators and emojis.
 
-Choropleth PNG displayed full width with subtle border/shadow, styled caption, and download button.
-
-Tabs: Map, Top/Bottom, Summary & Downloads, Public Policies.
-
-.streamlit/config.toml for a clean theme and wide layout.
-
-requirements.txt updated to include Altair.
+Choropleth PNG displayed full width with caption and download.
 
 Team & Responsibilities
 
 Sarita Sánchez – Data preparation, repository setup, reproducibility.
 
-Vivi Saurino – Zonal statistics & data aggregation; dataset wiring; Streamlit app polishing (CSS title & compact typography, Altair charts, gradient tables with 2 decimals, KPIs con separadores y emojis, styled choropleth PNG with caption & download); folder hygiene and data placement decisions (zipped vectors).
+Vivi Saurino – Zonal statistics & data aggregation; wiring datasets; Streamlit polishing
+(CSS title/typography, Altair charts, gradient tables with 2 decimals, KPIs con separadores y emojis, styled choropleth with caption & download); folder hygiene and data placement decisions.
 
-[Nombre 3] – Visualization (additional plots, map styling, rankings).
+[Nombre 3] – Visualization (extra plots/maps/rankings).
 
-[Nombre 4] – Streamlit deployment (Community Cloud) and public policy proposals.
+[Nombre 4] – Streamlit deployment & public policy write-up.
 
-Replace [Nombre 3] and [Nombre 4] with your teammates’ names and exact scopes.
+Replace placeholders with your teammates’ names and scopes.
 
 Next steps
 
-Validate that raster bands match the intended years (e.g., Band 1 = 2020).
+Validate band-year mapping in the GeoTIFF.
 
-Add a custom risk metric (e.g., combining p10 and altitude) to the CSV/app.
+Add a custom risk index (e.g., combine p10 with altitude).
 
-Deploy to Streamlit Community Cloud and paste the link in the submission sheet.
+Deploy to Streamlit Community Cloud and add the link here.
 
-Add screenshots of the app into the README if needed.
-
-Notes
-
-If your hardware is limited, switch the territorial level to provinces or departments in zonal_stats.py.
-
-Use only relative paths to avoid portability issues.
+Add a screenshot of the app to this README.
