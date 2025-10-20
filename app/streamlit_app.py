@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
+import altair as alt  # NEW: para barras bonitas e interactivas
 
 # ---------------------------
 # Rutas relativas del proyecto
@@ -56,6 +57,33 @@ def inject_css():
 
 inject_css()
 # ========================================================
+
+# --- Barras Altair (helper) ---
+def make_bar_chart(df: pd.DataFrame, metric: str, color: str = "#4E79A7", sort: str = "-y"):
+    """
+    df: dataframe con columnas 'label' y la métrica numérica.
+    metric: 'mean', 'p10', 'p90' o 'risk_index'
+    color: color de las barras (hex)
+    sort: '-y' para ordenar de mayor a menor (Top), 'y' para menor a mayor (Bottom)
+    """
+    data = df[["label", metric]].copy()
+    data[metric] = pd.to_numeric(data[metric], errors="coerce")
+
+    chart = (
+        alt.Chart(data)
+        .mark_bar(color=color, cornerRadiusTopLeft=3, cornerRadiusTopRight=3)
+        .encode(
+            x=alt.X("label:N", sort=sort, axis=alt.Axis(labelAngle=-45, title=None)),
+            y=alt.Y(f"{metric}:Q", title=metric),
+            tooltip=[
+                alt.Tooltip("label:N", title="Distrito"),
+                alt.Tooltip(f"{metric}:Q", title=metric, format=".2f"),
+            ],
+        )
+        .properties(height=280)
+        .interactive()
+    )
+    return chart
 
 # ---------------------------
 # Utilidades
@@ -158,7 +186,10 @@ with tab2:
             tplot = top.sort_values(metric, ascending=False).copy()
             label_cols = [c for c in ["DEPARTAMENTO","PROVINCIA","DISTRITO"] if c in tplot.columns]
             tplot["label"] = tplot[label_cols].agg(" - ".join, axis=1) if label_cols else tplot.index.astype(str)
-            st.bar_chart(tplot.set_index("label")[metric])
+
+            # NEW: barras Altair (Top)
+            chart_top = make_bar_chart(tplot, metric, color="#4E79A7", sort="-y")
+            st.altair_chart(chart_top, use_container_width=True)
 
             # formateo 2 decimales
             fmt_cols_top = [c for c in ["mean","p10","p90","risk_index"] if c in tplot.columns]
@@ -174,7 +205,10 @@ with tab2:
             bplot = bot.sort_values(metric, ascending=True).copy()
             label_cols = [c for c in ["DEPARTAMENTO","PROVINCIA","DISTRITO"] if c in bplot.columns]
             bplot["label"] = bplot[label_cols].agg(" - ".join, axis=1) if label_cols else bplot.index.astype(str)
-            st.bar_chart(bplot.set_index("label")[metric])
+
+            # NEW: barras Altair (Bottom)
+            chart_bot = make_bar_chart(bplot, metric, color="#E15759", sort="y")
+            st.altair_chart(chart_bot, use_container_width=True)
 
             # formateo 2 decimales
             fmt_cols_bot = [c for c in ["mean","p10","p90","risk_index"] if c in bplot.columns]
