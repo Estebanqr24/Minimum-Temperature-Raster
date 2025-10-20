@@ -112,6 +112,10 @@ Vivi Saurino
 - Métricas/KPI y estilo de página (título centrado, tipografía compacta).
 - Tema visual en .streamlit/config.toml y aviso de deprecación resuelto (use_container_width).
 
+Piero Benate
+- Creación de archivo notebook (.ipynb) de EDA para los promedios de temperatura mínima por distrito, ubicado en la carpeta /notebooks/.
+- Creación del histograma sobre la frecuencia de las temperaturas mínimas.
+
 
 
 
@@ -147,7 +151,11 @@ Minimum-Temperature-Raster/
 │   └── zonal_stats.py
 └── app/
     └── streamlit_app.py
-
+├── notebooks/
+│   ├── prepare_data.py
+│   └── zonal_stats.py
+└── app/
+    └── tmin_EDA.ipynb
 
 Tip: Keep heavy shapefiles zipped in data/raw/vectors/. The scripts can read from the cleaned GeoJSON in data/clean/.
 
