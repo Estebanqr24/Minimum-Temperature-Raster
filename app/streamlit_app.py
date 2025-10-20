@@ -24,7 +24,7 @@ st.set_page_config(
     page_icon="❄️"
 )
 
-# ===== Estilo (centrar título + tipografía compacta) =====
+# ===== Estilo (centrar título + tipografía compacta + mapa bonito) =====
 def inject_css():
     st.markdown("""
         <style>
@@ -52,6 +52,21 @@ def inject_css():
         div[data-testid="stMetricDelta"] { font-size: .9rem; }
         /* tabs con un poquito de aire entre ellos */
         div[data-baseweb="tab-list"] { gap: .25rem; }
+
+        /* ===== Paso 6: estilo visual del PNG del mapa ===== */
+        /* Aplica borde y sombra sutiles a todas las imágenes (tenemos solo 1, el mapa) */
+        div[data-testid="stImage"] img {
+            border: 1px solid rgba(0,0,0,.08);
+            border-radius: 12px;
+            box-shadow: 0 1px 8px rgba(0,0,0,.06);
+        }
+        /* Caption estilizado centrado */
+        .map-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #5b6573;
+            margin-top: .35rem;
+        }
         </style>
     """, unsafe_allow_html=True)
 
@@ -97,6 +112,17 @@ def style_table(df: pd.DataFrame, metric_cols: list[str], cmap: str = "YlGnBu"):
         .background_gradient(cmap=cmap, subset=[c for c in metric_cols if c in df.columns])
         .set_properties(**{"font-size": "0.9rem"})
     )
+
+# --- Formateo bonito para KPIs (Paso 5) ---
+def fmt_float(x: float, decimals: int = 2) -> str:
+    if x is None or (isinstance(x, float) and np.isnan(x)):
+        return "—"
+    return f"{x:,.{decimals}f}"
+
+def fmt_int(x: float | int) -> str:
+    if x is None or (isinstance(x, float) and np.isnan(x)):
+        return "—"
+    return f"{int(x):,}"
 
 # ---------------------------
 # Utilidades
@@ -146,16 +172,17 @@ if df.shape[0] > 0 and (top.shape[0] == 0 or bot.shape[0] == 0):
 st.title("Temperatura mínima en Perú (Tmin) – Análisis ráster")
 st.caption("Repositorio: **Minimum-Temperature-Raster** · App Streamlit")
 
-# KPI rápidos si hay datos
+# KPI rápidos si hay datos (Paso 5 con separadores y emojis)
 if df.shape[0] > 0:
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Distritos", f"{df.shape[0]:,}")
+
+    c1.metric("🧩 Distritos", fmt_int(df.shape[0]))
     if "mean" in df:
-        c2.metric("Tmin media (°C)", f"{df['mean'].mean():.2f}")
+        c2.metric("🌡️ Tmin media (°C)", fmt_float(df["mean"].mean(), 2))
     if "p10" in df:
-        c3.metric("P10 (°C) promedio", f"{df['p10'].mean():.2f}")
+        c3.metric("🧊 P10 promedio (°C)", fmt_float(df["p10"].mean(), 2))
     if "risk_flag" in df:
-        c4.metric("Distritos con Tmin<0°C", int(df["risk_flag"].sum()))
+        c4.metric("🚩 Tmin < 0°C (n° distritos)", fmt_int(df["risk_flag"].sum()))
 
 # ---------------------------
 # Pestañas
@@ -173,9 +200,23 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.subheader("Mapa coroplético – Tmin media por distrito")
     if img is not None:
-        # reemplazo para eliminar el warning deprecado
-        st.image(img, caption="Coropleta de Tmin media (GeoPandas)", use_container_width=True)
+        # Ancho completo con borde/sombra (controlado vía CSS) + caption estilizado + descarga
+        st.image(img, use_container_width=True)
+        st.markdown(
+            "<div class='map-caption'>Coropleta de Tmin media (GeoPandas) · Fuente: procesamiento propio</div>",
+            unsafe_allow_html=True
+        )
+        # Info técnica y botón de descarga
         st.info("Este mapa se genera en el script `scripts/zonal_stats.py` y se guarda en `data/processed/tmin_choropleth.png`.")
+        col_dl, _ = st.columns([1, 3])
+        with col_dl:
+            st.download_button(
+                "📥 Descargar PNG del mapa",
+                data=PNG_MAP.read_bytes() if PNG_MAP.exists() else None,
+                file_name=PNG_MAP.name,
+                disabled=not PNG_MAP.exists(),
+                help="Exporta la imagen del mapa para informes o presentaciones."
+            )
     else:
         st.warning("No se encontró el mapa PNG. Asegúrate de ejecutar el script y de que exista `data/processed/tmin_choropleth.png`.")
 
@@ -204,7 +245,7 @@ with tab2:
             chart_top = make_bar_chart(tplot, metric, color="#4E79A7", sort="-y")
             st.altair_chart(chart_top, use_container_width=True)
 
-            # (Paso 4) 2 decimales + gradiente
+            # 2 decimales + gradiente
             fmt_cols_top = [c for c in ["mean","p10","p90","risk_index"] if c in tplot.columns]
             st.dataframe(
                 style_table(tplot, fmt_cols_top),
@@ -223,7 +264,7 @@ with tab2:
             chart_bot = make_bar_chart(bplot, metric, color="#E15759", sort="y")
             st.altair_chart(chart_bot, use_container_width=True)
 
-            # (Paso 4) 2 decimales + gradiente
+            # 2 decimales + gradiente
             fmt_cols_bot = [c for c in ["mean","p10","p90","risk_index"] if c in bplot.columns]
             st.dataframe(
                 style_table(bplot, fmt_cols_bot),
@@ -267,9 +308,9 @@ with tab3:
         else:
             df_view = df_view[df_view["mean"] >= umbral]
 
-        st.write(f"**Registros filtrados:** {df_view.shape[0]}")
+        st.write(f"**Registros filtrados:** {fmt_int(df_view.shape[0])}")
 
-        # (Paso 4) 2 decimales + gradiente en la tabla de resumen
+        # 2 decimales + gradiente en la tabla de resumen
         fmt_cols_view = [c for c in ["mean","p10","p90","risk_index"] if c in df_view.columns]
         st.dataframe(
             style_table(df_view, fmt_cols_view),
@@ -277,15 +318,15 @@ with tab3:
             height=420
         )
 
-        # KPIs del subset
+        # KPIs del subset (con separadores y emojis)
         k1, k2, k3, k4 = st.columns(4)
-        k1.metric("Tmin media (°C)", f"{df_view['mean'].mean():.2f}")
+        k1.metric("🌡️ Tmin media (°C)", fmt_float(df_view["mean"].mean(), 2))
         if "p10" in df_view:
-            k2.metric("P10 promedio", f"{df_view['p10'].mean():.2f}")
+            k2.metric("🧊 P10 promedio (°C)", fmt_float(df_view["p10"].mean(), 2))
         if "p90" in df_view:
-            k3.metric("P90 promedio", f"{df_view['p90'].mean():.2f}")
+            k3.metric("🔥 P90 promedio (°C)", fmt_float(df_view["p90"].mean(), 2))
         if "risk_flag" in df_view:
-            k4.metric("Distritos Tmin<0°C", int(df_view["risk_flag"].sum()))
+            k4.metric("🚩 Tmin < 0°C (n° distritos)", fmt_int(df_view["risk_flag"].sum()))
 
         st.download_button("Descargar tabla filtrada (CSV)", data=bytes_from_df(df_view), file_name="tmin_filtrado.csv", mime="text/csv")
 
