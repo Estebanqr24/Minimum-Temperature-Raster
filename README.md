@@ -35,8 +35,9 @@ pip install -r requirements.txt
 
 **Option B (local analysis / dev extras: Geo stack):**
 
-  ```bash
+```
 pip install -r requirements-dev.txt
+```
 
 If you use conda/mamba, create an env first and then install with pip inside that env.
 
@@ -47,8 +48,9 @@ If you use conda/mamba, create an env first and then install with pip inside tha
 
 3) Prepare data
 
- ```bash
+```
 python scripts/prepare_data.py
+```
 
 Creates:
 
@@ -57,8 +59,9 @@ Creates:
 
 4) Zonal statistics + artifacts
 
- ```bash
+```
 python scripts/zonal_stats.py
+```
 
 Creates:
 
@@ -73,8 +76,9 @@ Creates:
 
 From the repo root:
 
- ```bash
+```
 streamlit run app/streamlit_app.py
+```
 
 The theme is configured in .streamlit/config.toml.
 
