@@ -29,7 +29,9 @@ This repository contains the materials for the team assignment on **minimum temp
 
 **Option A (minimal for the app):**
 
-```bash
+```
+pip install -r requirements.txt
+```
 
 **Option B (local analysis / dev extras: Geo stack):**
 
