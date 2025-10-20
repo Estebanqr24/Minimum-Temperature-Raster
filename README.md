@@ -52,46 +52,39 @@ Tip: Keep heavy shapefiles zipped in data/raw/vectors/. The scripts can read fro
 
 ---
 
+
 ## Reproducibility
+
 1) Environment
-
 Python 3.10+
+- Option A (minimal for the app): pip install -r requirements.txt
+- Option B (local analysis / dev extras: Geo stack): pip install -r requirements-dev.txt
 
-Option A (minimal for the app):
-pip install -r requirements.txt
-
-Option B (local analysis / dev extras: Geo stack):
-pip install -r requirements-dev.txt
 
 Si usas conda/mamba, crea un env y luego instala con pip dentro del env.
 
 2) Place datasets
 
-GeoTIFF → data/raw/raster/tmin_peru.tif
-
-Vectors (INEI districts zipped) → data/raw/vectors/DISTRITOS_LIMITES.zip
+- GeoTIFF → data/raw/raster/tmin_peru.tif
+- Vectors (INEI districts zipped) → data/raw/vectors/DISTRITOS_LIMITES.zip
 
 3) Prepare data
 python scripts/prepare_data.py
 
 Creates:
 
-data/clean/peru_distrital_simple.geojson (uppercase, sin tildes, geometrías reparadas)
-
-Chequeos básicos del ráster (CRS, dtype, min/max, multibanda)
+- data/clean/peru_distrital_simple.geojson (uppercase, sin tildes, geometrías reparadas)
+- Chequeos básicos del ráster (CRS, dtype, min/max, multibanda)
 
 4) Zonal statistics + artifacts
 python scripts/zonal_stats.py
 
 Creates:
 
-data/processed/tmin_zonal_distritos.csv
-
-data/processed/top15_tmin_mean_alta.csv
-
-data/processed/top15_tmin_mean_baja.csv
-
-data/processed/tmin_choropleth.png (mapa estático exportado)
+- data/processed/tmin_zonal_distritos.csv
+- data/processed/top15_tmin_mean_alta.csv
+- data/processed/top15_tmin_mean_baja.csv
+- data/processed/tmin_choropleth.png (mapa estático exportado)
 
 Run the Streamlit app
 
@@ -108,23 +101,17 @@ Work in EPSG:4326 unless computing areas (then reproject to a suitable UTM).
 
 Use data/raw/ for originals, data/clean/ para vectores estandarizados, data/processed/ para resultados/artefactos.
 
-Team & Responsibilities
+## Team & Responsibilities
 
-Sarita Sánchez – Data preparation, repository setup, reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
-Vivi Saurino – Zonal statistics, análisis y app:
+-Sarita Sánchez – Data preparation, repository setup, reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
+- Vivi Saurino – Zonal statistics, análisis y app:
 
 Reorganizó la carpeta data/ (unificación de raw/ y processed/, .gitkeep para estructura limpia).
-
 Subió y ubicó correctamente DISTRITOS_LIMITES.zip y el ráster tmin_peru.tif.
-
 Ejecutó y depuró scripts/zonal_stats.py (resolución de error por columnas duplicadas en GeoDataFrame).
-
 Generó artefactos en data/processed/: tmin_zonal_distritos.csv, top15_tmin_mean_alta.csv, top15_tmin_mean_baja.csv y tmin_choropleth.png.
-
 Implementó y dejó funcionando la app Streamlit (app/streamlit_app.py) con:
-
 Pestañas: Mapa coroplético, Top/Bottom 15, Resumen y descargas, Políticas públicas.
-
 Altair para barras interactivas (Top/Bottom).
 
 Tablas con formato a 2 decimales y filtros (departamento y umbral).
