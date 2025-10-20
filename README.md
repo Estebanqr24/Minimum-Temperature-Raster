@@ -54,20 +54,23 @@ Creates:
 - data/processed/top15_tmin_mean_baja.csv
 - data/processed/tmin_choropleth.png (mapa estático exportado)
 
-Run the Streamlit app
+---
+
+## Run the Streamlit app
 
 From the repo root:
+
 streamlit run app/streamlit_app.py
 
 The theme is configured in .streamlit/config.toml.
 
-Notes / Conventions
+---
 
-Prefer relative paths.
+## Notes / Conventions
 
-Work in EPSG:4326 unless computing areas (then reproject to a suitable UTM).
-
-Use data/raw/ for originals, data/clean/ para vectores estandarizados, data/processed/ para resultados/artefactos.
+- Prefer relative paths.
+- Work in EPSG:4326 unless computing areas (then reproject to a suitable UTM).
+- Use data/raw/ for originals, data/clean/ para vectores estandarizados, data/processed/ para resultados/artefactos.
 
 ---
 
