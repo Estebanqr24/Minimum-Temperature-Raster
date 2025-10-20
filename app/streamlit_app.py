@@ -23,6 +23,40 @@ st.set_page_config(
     page_icon="❄️"
 )
 
+# ===== Estilo (centrar título + tipografía compacta) =====
+def inject_css():
+    st.markdown("""
+        <style>
+        /* tipografía y compacidad general */
+        html, body, [class*="css"] {
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+                         "Noto Sans", Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+            font-size: 15px;
+            line-height: 1.28;
+        }
+        /* título centrado y un poco más compacto */
+        .stApp h1 {
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: .2px;
+            margin-bottom: .4rem;
+        }
+        /* subtítulos un pelín más compactos */
+        .stApp h2 { margin-top: .8rem;  margin-bottom: .45rem; font-weight: 650; }
+        .stApp h3 { margin-top: .6rem;  margin-bottom: .35rem; }
+        /* padding del contenedor para que todo se vea respirado pero compacto */
+        .block-container { padding-top: .9rem; padding-bottom: 1.0rem; }
+        /* métrica un poco más pequeña y legible */
+        div[data-testid="stMetricValue"] { font-size: 1.15rem; }
+        div[data-testid="stMetricDelta"] { font-size: .9rem; }
+        /* tabs con un poquito de aire entre ellos */
+        div[data-baseweb="tab-list"] { gap: .25rem; }
+        </style>
+    """, unsafe_allow_html=True)
+
+inject_css()
+# ========================================================
+
 # ---------------------------
 # Utilidades
 # ---------------------------
@@ -98,7 +132,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.subheader("Mapa coroplético – Tmin media por distrito")
     if img is not None:
-        # <-- Ajuste: reemplazo para eliminar el warning deprecado
+        # reemplazo para eliminar el warning deprecado
         st.image(img, caption="Coropleta de Tmin media (GeoPandas)", use_container_width=True)
         st.info("Este mapa se genera en el script `scripts/zonal_stats.py` y se guarda en `data/processed/tmin_choropleth.png`.")
     else:
@@ -126,7 +160,7 @@ with tab2:
             tplot["label"] = tplot[label_cols].agg(" - ".join, axis=1) if label_cols else tplot.index.astype(str)
             st.bar_chart(tplot.set_index("label")[metric])
 
-            # <-- Ajuste: formateo 2 decimales
+            # formateo 2 decimales
             fmt_cols_top = [c for c in ["mean","p10","p90","risk_index"] if c in tplot.columns]
             st.dataframe(
                 tplot.style.format({col: "{:.2f}" for col in fmt_cols_top}),
@@ -142,7 +176,7 @@ with tab2:
             bplot["label"] = bplot[label_cols].agg(" - ".join, axis=1) if label_cols else bplot.index.astype(str)
             st.bar_chart(bplot.set_index("label")[metric])
 
-            # <-- Ajuste: formateo 2 decimales
+            # formateo 2 decimales
             fmt_cols_bot = [c for c in ["mean","p10","p90","risk_index"] if c in bplot.columns]
             st.dataframe(
                 bplot.style.format({col: "{:.2f}" for col in fmt_cols_bot}),
@@ -188,7 +222,7 @@ with tab3:
 
         st.write(f"**Registros filtrados:** {df_view.shape[0]}")
 
-        # <-- Ajuste: formateo 2 decimales en tabla de resumen
+        # formateo 2 decimales en tabla de resumen
         fmt_cols_view = [c for c in ["mean","p10","p90","risk_index"] if c in df_view.columns]
         st.dataframe(
             df_view.style.format({col: "{:.2f}" for col in fmt_cols_view}),
