@@ -27,8 +27,11 @@ This repository contains the materials for the team assignment on **minimum temp
 - Python 3.10+
 
   Option A (minimal for the app):
+
   pip install -r requirements.txt
+
   Option B (local analysis / dev extras: Geo stack):
+
   pip install -r requirements-dev.txt
 
 Si usas conda/mamba, crea un env y luego instala con pip dentro del env.
@@ -85,7 +88,8 @@ Sarita Sánchez
 - Repository setup
 - Reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
   
-Vivi Saurino – Zonal statistics, análisis y app:
+Vivi Saurino
+- Zonal statistics, análisis y app
 - Reorganizó la carpeta data/ (unificación de raw/ y processed/, .gitkeep para estructura limpia).
 - Subió y ubicó correctamente DISTRITOS_LIMITES.zip y el ráster tmin_peru.tif.
 - Ejecutó y depuró scripts/zonal_stats.py (resolución de error por columnas duplicadas en GeoDataFrame).
