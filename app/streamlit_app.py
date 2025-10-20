@@ -85,6 +85,19 @@ def make_bar_chart(df: pd.DataFrame, metric: str, color: str = "#4E79A7", sort: 
     )
     return chart
 
+# --- Tablas bonitas (Paso 4) ---
+def style_table(df: pd.DataFrame, metric_cols: list[str], cmap: str = "YlGnBu"):
+    """
+    Devuelve un Styler con 2 decimales + gradiente para las columnas métricas.
+    """
+    fmt = {c: "{:.2f}" for c in metric_cols if c in df.columns}
+    return (
+        df.style
+        .format(fmt)
+        .background_gradient(cmap=cmap, subset=[c for c in metric_cols if c in df.columns])
+        .set_properties(**{"font-size": "0.9rem"})
+    )
+
 # ---------------------------
 # Utilidades
 # ---------------------------
@@ -191,10 +204,10 @@ with tab2:
             chart_top = make_bar_chart(tplot, metric, color="#4E79A7", sort="-y")
             st.altair_chart(chart_top, use_container_width=True)
 
-            # formateo 2 decimales
+            # (Paso 4) 2 decimales + gradiente
             fmt_cols_top = [c for c in ["mean","p10","p90","risk_index"] if c in tplot.columns]
             st.dataframe(
-                tplot.style.format({col: "{:.2f}" for col in fmt_cols_top}),
+                style_table(tplot, fmt_cols_top),
                 use_container_width=True,
                 height=350
             )
@@ -210,10 +223,10 @@ with tab2:
             chart_bot = make_bar_chart(bplot, metric, color="#E15759", sort="y")
             st.altair_chart(chart_bot, use_container_width=True)
 
-            # formateo 2 decimales
+            # (Paso 4) 2 decimales + gradiente
             fmt_cols_bot = [c for c in ["mean","p10","p90","risk_index"] if c in bplot.columns]
             st.dataframe(
-                bplot.style.format({col: "{:.2f}" for col in fmt_cols_bot}),
+                style_table(bplot, fmt_cols_bot),
                 use_container_width=True,
                 height=350
             )
@@ -256,10 +269,10 @@ with tab3:
 
         st.write(f"**Registros filtrados:** {df_view.shape[0]}")
 
-        # formateo 2 decimales en tabla de resumen
+        # (Paso 4) 2 decimales + gradiente en la tabla de resumen
         fmt_cols_view = [c for c in ["mean","p10","p90","risk_index"] if c in df_view.columns]
         st.dataframe(
-            df_view.style.format({col: "{:.2f}" for col in fmt_cols_view}),
+            style_table(df_view, fmt_cols_view),
             use_container_width=True,
             height=420
         )
