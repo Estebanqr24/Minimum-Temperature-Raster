@@ -41,12 +41,12 @@ pip install -r requirements-dev.txt
 
 If you use conda/mamba, create an env first and then install with pip inside that env.
 
-2) Place datasets
+### 2) Place datasets
 
 - GeoTIFF → data/raw/raster/tmin_peru.tif
 - Vectors (INEI districts zipped) → data/raw/vectors/DISTRITOS_LIMITES.zip
 
-3) Prepare data
+### 3) Prepare data
 
 ```
 python scripts/prepare_data.py
@@ -57,7 +57,7 @@ Creates:
 - data/clean/peru_distrital_simple.geojson (uppercase, sin tildes, geometrías reparadas)
 - Chequeos básicos del ráster (CRS, dtype, min/max, multibanda)
 
-4) Zonal statistics + artifacts
+### 4) Zonal statistics + artifacts
 
 ```
 python scripts/zonal_stats.py
