@@ -24,10 +24,12 @@ This repository contains the materials for the team assignment on **minimum temp
 ## Reproducibility
 
 1) Environment
-Python 3.10+
-- Option A (minimal for the app): pip install -r requirements.txt
-- Option B (local analysis / dev extras: Geo stack): pip install -r requirements-dev.txt
+- Python 3.10+
 
+  Option A (minimal for the app):
+  pip install -r requirements.txt
+  Option B (local analysis / dev extras: Geo stack):
+  pip install -r requirements-dev.txt
 
 Si usas conda/mamba, crea un env y luego instala con pip dentro del env.
 
@@ -37,6 +39,7 @@ Si usas conda/mamba, crea un env y luego instala con pip dentro del env.
 - Vectors (INEI districts zipped) → data/raw/vectors/DISTRITOS_LIMITES.zip
 
 3) Prepare data
+
 python scripts/prepare_data.py
 
 Creates:
@@ -45,6 +48,7 @@ Creates:
 - Chequeos básicos del ráster (CRS, dtype, min/max, multibanda)
 
 4) Zonal statistics + artifacts
+
 python scripts/zonal_stats.py
 
 Creates:
@@ -76,9 +80,12 @@ The theme is configured in .streamlit/config.toml.
 
 ## Team & Responsibilities
 
-Sarita Sánchez – Data preparation, repository setup, reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
+Sarita Sánchez
+- Data preparation
+- Repository setup
+- Reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
+  
 Vivi Saurino – Zonal statistics, análisis y app:
-
 - Reorganizó la carpeta data/ (unificación de raw/ y processed/, .gitkeep para estructura limpia).
 - Subió y ubicó correctamente DISTRITOS_LIMITES.zip y el ráster tmin_peru.tif.
 - Ejecutó y depuró scripts/zonal_stats.py (resolución de error por columnas duplicadas en GeoDataFrame).
