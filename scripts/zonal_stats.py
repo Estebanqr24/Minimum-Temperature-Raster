@@ -8,6 +8,7 @@ import geopandas as gpd
 import rasterio
 from rasterstats import zonal_stats
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # -------------------------
 # Rutas
@@ -132,6 +133,21 @@ plt.tight_layout()
 plt.savefig(PNG_OUT, dpi=200)
 plt.close()
 print(f'✓ Mapa PNG guardado en {PNG_OUT}')
+
+# Histograma de la Tmin promedio
+plt.figure(figsize=(12, 6))
+sns.histplot(gdf['mean'], kde=True, bins=30)
+plt.title('Distribución de Temperatura Mínima Promedio (°C) en Distritos de Perú')
+plt.xlabel('Temperatura Mínima Promedio (°C)')
+plt.ylabel('Número de distritos')
+plt.axvline(gdf['mean'].mean(), color='red', linestyle='--', 
+            label=f'Media: {gdf["mean"].mean():.2f}°C')
+plt.axvline(gdf['mean'].median(), color='green', linestyle='--', 
+            label=f'Mediana: {gdf["mean"].median():.2f}°C')
+plt.legend()
+plt.tight_layout()
+plt.savefig('histograma_Tmin_prom.png', dpi=300)
+plt.show()
 
 # Top/Bottom 15
 top_csv  = os.path.join(OUT_DIR, 'top15_tmin_mean_alta.csv')
