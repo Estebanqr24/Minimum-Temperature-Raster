@@ -21,38 +21,6 @@ This repository contains the materials for the team assignment on **minimum temp
 
 ---
 
-## Folder structure
-```text
-Minimum-Temperature-Raster/
-├── README.md
-├── requirements.txt
-├── .streamlit/
-│   └── config.toml
-├── data/
-│   ├── raw/
-│   │   ├── raster/
-│   │   │   └── tmin_peru.tif
-│   │   └── vectors/
-│   │       └── DISTRITOS_LIMITES.zip
-│   ├── clean/
-│   │   └── peru_distrital_simple.geojson
-│   └── processed/
-│       ├── tmin_zonal_distritos.csv
-│       ├── top15_tmin_mean_alta.csv
-│       ├── top15_tmin_mean_baja.csv
-│       └── tmin_choropleth.png
-├── scripts/
-│   ├── prepare_data.py
-│   └── zonal_stats.py
-└── app/
-    └── streamlit_app.py
-
-
-Tip: Keep heavy shapefiles zipped in data/raw/vectors/. The scripts can read from the cleaned GeoJSON in data/clean/.
-
----
-
-
 ## Reproducibility
 
 1) Environment
@@ -101,21 +69,64 @@ Work in EPSG:4326 unless computing areas (then reproject to a suitable UTM).
 
 Use data/raw/ for originals, data/clean/ para vectores estandarizados, data/processed/ para resultados/artefactos.
 
+---
+
 ## Team & Responsibilities
 
--Sarita Sánchez – Data preparation, repository setup, reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
-- Vivi Saurino – Zonal statistics, análisis y app:
+Sarita Sánchez – Data preparation, repository setup, reproducibility (estructura base, preparación de vectores y ráster, guías de setup).
+Vivi Saurino – Zonal statistics, análisis y app:
 
-Reorganizó la carpeta data/ (unificación de raw/ y processed/, .gitkeep para estructura limpia).
-Subió y ubicó correctamente DISTRITOS_LIMITES.zip y el ráster tmin_peru.tif.
-Ejecutó y depuró scripts/zonal_stats.py (resolución de error por columnas duplicadas en GeoDataFrame).
-Generó artefactos en data/processed/: tmin_zonal_distritos.csv, top15_tmin_mean_alta.csv, top15_tmin_mean_baja.csv y tmin_choropleth.png.
-Implementó y dejó funcionando la app Streamlit (app/streamlit_app.py) con:
-Pestañas: Mapa coroplético, Top/Bottom 15, Resumen y descargas, Políticas públicas.
-Altair para barras interactivas (Top/Bottom).
+- Reorganizó la carpeta data/ (unificación de raw/ y processed/, .gitkeep para estructura limpia).
+- Subió y ubicó correctamente DISTRITOS_LIMITES.zip y el ráster tmin_peru.tif.
+- Ejecutó y depuró scripts/zonal_stats.py (resolución de error por columnas duplicadas en GeoDataFrame).
+- Generó artefactos en data/processed/: tmin_zonal_distritos.csv, top15_tmin_mean_alta.csv, top15_tmin_mean_baja.csv y tmin_choropleth.png.
+- Implementó y dejó funcionando la app Streamlit (app/streamlit_app.py) con:
+- Pestañas: Mapa coroplético, Top/Bottom 15, Resumen y descargas, Políticas públicas.
+- Altair para barras interactivas (Top/Bottom).
+- Tablas con formato a 2 decimales y filtros (departamento y umbral).
+- Métricas/KPI y estilo de página (título centrado, tipografía compacta).
+- Tema visual en .streamlit/config.toml y aviso de deprecación resuelto (use_container_width).
 
-Tablas con formato a 2 decimales y filtros (departamento y umbral).
 
-Métricas/KPI y estilo de página (título centrado, tipografía compacta).
 
-Tema visual en .streamlit/config.toml y aviso de deprecación resuelto (use_container_width).
+
+
+
+
+
+
+
+
+## Folder structure
+```text
+Minimum-Temperature-Raster/
+├── README.md
+├── requirements.txt
+├── .streamlit/
+│   └── config.toml
+├── data/
+│   ├── raw/
+│   │   ├── raster/
+│   │   │   └── tmin_peru.tif
+│   │   └── vectors/
+│   │       └── DISTRITOS_LIMITES.zip
+│   ├── clean/
+│   │   └── peru_distrital_simple.geojson
+│   └── processed/
+│       ├── tmin_zonal_distritos.csv
+│       ├── top15_tmin_mean_alta.csv
+│       ├── top15_tmin_mean_baja.csv
+│       └── tmin_choropleth.png
+├── scripts/
+│   ├── prepare_data.py
+│   └── zonal_stats.py
+└── app/
+    └── streamlit_app.py
+
+
+Tip: Keep heavy shapefiles zipped in data/raw/vectors/. The scripts can read from the cleaned GeoJSON in data/clean/.
+
+---
+
+
+
