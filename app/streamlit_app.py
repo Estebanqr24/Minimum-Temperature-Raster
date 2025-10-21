@@ -187,13 +187,13 @@ if df.shape[0] > 0:
 # ---------------------------
 # Pestañas
 # ---------------------------
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab_hist, tab2, tab3, tab4 = st.tabs([
     "🗺️ Mapa coroplético",
+    "📈 Distribución (Histograma)",
     "📊 Top / Bottom 15",
     "🧾 Resumen y descargas",
     "🏛️ Políticas públicas"
 ])
-
 # ===========
 # TAB 1: MAPA
 # ===========
@@ -219,6 +219,27 @@ with tab1:
             )
     else:
         st.warning("No se encontró el mapa PNG. Asegúrate de ejecutar el script y de que exista `data/processed/tmin_choropleth.png`.")
+with tab_hist:
+    st.subheader("Distribución de la temperatura mínima promedio (°C)")
+    hist_path = DATA_PROCESSED / "histograma_tmin.png"
+    
+    if hist_path.exists():
+        st.image(str(hist_path),
+                 caption="Histograma de la Tmin promedio (°C) en distritos del Perú",
+                 use_container_width=True)
+        st.info("Este gráfico muestra cómo se distribuyen las temperaturas mínimas promedio por distrito. Ayuda a identificar zonas frías o con heladas.")
+        
+        col1, _ = st.columns([1,3])
+        with col1:
+            st.download_button(
+                "📥 Descargar histograma (PNG)",
+                data=hist_path.read_bytes(),
+                file_name="histograma_tmin.png",
+                help="Descarga la imagen para informes o presentaciones."
+            )
+    else:
+        st.warning("No se encontró el archivo `data/processed/histograma_tmin.png`. Ejecuta el script `scripts/zonal_stats.py` antes de abrir esta pestaña.")
+
 
 # ======================
 # TAB 2: RANKINGS BARRAS
@@ -239,7 +260,7 @@ with tab2:
             st.markdown("**Top 15 Tmin media más ALTA**")
             tplot = top.sort_values(metric, ascending=False).copy()
             label_cols = [c for c in ["DEPARTAMENTO","PROVINCIA","DISTRITO"] if c in tplot.columns]
-            tplot["label"] = tplot[label_cols].agg(" - ".join, axis=1) if label_cols else tplot.index.astype(str)
+            tplot["label"] = tplot[label_cols].apply(lambda row: " - ".join(row.astype(str)), axis=1) if label_cols else tplot.index.astype(str)
 
             # NEW: barras Altair (Top)
             chart_top = make_bar_chart(tplot, metric, color="#4E79A7", sort="-y")
@@ -258,7 +279,7 @@ with tab2:
             st.markdown("**Top 15 Tmin media más BAJA**")
             bplot = bot.sort_values(metric, ascending=True).copy()
             label_cols = [c for c in ["DEPARTAMENTO","PROVINCIA","DISTRITO"] if c in bplot.columns]
-            bplot["label"] = bplot[label_cols].agg(" - ".join, axis=1) if label_cols else bplot.index.astype(str)
+            bplot["label"] = bplot[label_cols].apply(lambda row: " - ".join(row.astype(str)), axis=1) if label_cols else bplot.index.astype(str)
 
             # NEW: barras Altair (Bottom)
             chart_bot = make_bar_chart(bplot, metric, color="#E15759", sort="y")

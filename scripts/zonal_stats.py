@@ -136,18 +136,25 @@ print(f'✓ Mapa PNG guardado en {PNG_OUT}')
 
 # Histograma de la Tmin promedio
 plt.figure(figsize=(12, 6))
-sns.histplot(gdf['mean'], kde=True, bins=30)
-plt.title('Distribución de Temperatura Mínima Promedio (°C) en Distritos de Perú')
+sns.histplot(out['mean'], kde=True, bins=30, color='skyblue', edgecolor='black')
+
+plt.title('Distribución de Temperatura Mínima Promedio (°C) en Distritos del Perú')
 plt.xlabel('Temperatura Mínima Promedio (°C)')
-plt.ylabel('Número de distritos')
-plt.axvline(gdf['mean'].mean(), color='red', linestyle='--', 
-            label=f'Media: {gdf["mean"].mean():.2f}°C')
-plt.axvline(gdf['mean'].median(), color='green', linestyle='--', 
-            label=f'Mediana: {gdf["mean"].median():.2f}°C')
+plt.ylabel('Número de Distritos')
+
+plt.axvline(out['mean'].mean(), color='red', linestyle='--',
+            label=f'Media: {out["mean"].mean():.2f}°C')
+plt.axvline(out['mean'].median(), color='green', linestyle='--',
+            label=f'Mediana: {out["mean"].median():.2f}°C')
+
 plt.legend()
 plt.tight_layout()
-plt.savefig('histograma_Tmin_prom.png', dpi=300)
-plt.show()
+
+# Guardar histograma
+hist_png = os.path.join(OUT_DIR, 'histograma_tmin.png')
+plt.savefig(hist_png, dpi=300)
+plt.close()
+print(f'✓ Histograma guardado en {hist_png}')
 
 # Top/Bottom 15
 top_csv  = os.path.join(OUT_DIR, 'top15_tmin_mean_alta.csv')
